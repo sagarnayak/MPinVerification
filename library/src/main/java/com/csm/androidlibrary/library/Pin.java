@@ -45,7 +45,7 @@ public class Pin extends AppCompatActivity {
     String temp = "";
     int intMaxNoOfTries;
     boolean boolInfinityTries = false;
-    boolean boolSaveTextNow = true;
+    boolean boolOrieantionChangeDataSaving = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,22 +104,22 @@ public class Pin extends AppCompatActivity {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) relKeyboardContainer.getLayoutParams();
             if (width < height) {
                 //portrait
-                int assignparam = (int) (width * .60);
+                int assignparam = (int) (width * .55);
                 layoutParams.height = assignparam;
                 relKeyboardContainer.setLayoutParams(layoutParams);
             } else {
-                //landscape
+                //landscape not applied
             }
         } catch (Exception e) {
             Log.i("log", "problem in getting layout params");
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) relKeyboardContainer.getLayoutParams();
             if (width < height) {
-                //portrait
-                int assignparam = (int) (width * .60);
-                layoutParams.height = assignparam;
-                relKeyboardContainer.setLayoutParams(layoutParams);
+                //portrait not applied
             } else {
                 //landscape
+                int assignparam = (int) (((int) (width * .50)) * .60);
+                layoutParams.height = assignparam;
+                relKeyboardContainer.setLayoutParams(layoutParams);
             }
         }
     }
@@ -264,7 +264,7 @@ public class Pin extends AppCompatActivity {
 
                 Log.i("log", "the count value is : " + i + " " + i1 + " " + i2);
 
-                if (boolSaveTextNow) {
+                if (boolOrieantionChangeDataSaving) {
                     sharedPreferences.edit().putString(Utils.SAVED_TEXT, charSequence.toString()).commit();
 
                     Log.i("log", "saved value to sharedprefrence : " + sharedPreferences.getString(Utils.SAVED_TEXT, ""));
@@ -320,6 +320,7 @@ public class Pin extends AppCompatActivity {
                                     //count
                                     Log.i("log", "reducing the max number of tries.");
                                     intMaxNoOfTries--;
+                                    sharedPreferences.edit().putInt(Utils.SAVED_NO_OF_TRIES_FOR_ORIEANTION_CHANGE, intMaxNoOfTries).commit();
                                     txtNoOfTriesLeft.setText("Number of tries left : " + intMaxNoOfTries);
                                     if (intMaxNoOfTries == 0) {
                                         Log.i("log", "max number if tries is reached.");
@@ -402,7 +403,7 @@ public class Pin extends AppCompatActivity {
         }
 
         //set hint to the edittext
-        edtPin.setHint("number with" + intNoOfDigits + " digits for pin");
+        edtPin.setHint("" + intNoOfDigits + " digits to pin to set");
         edtPin.setText("");
 
         //set current operation type as set initial pin
@@ -420,9 +421,14 @@ public class Pin extends AppCompatActivity {
             setNewPin();
         } else {
 
-            if (sharedPreferences.getInt(Utils.SAVED_ICON, 0) != 0) {
-                //icon is present
-                imgIcon.setImageDrawable(getResources().getDrawable(sharedPreferences.getInt(Utils.SAVED_ICON, 0)));
+            if (intent.getIntExtra(Utils.ICON_ID, 0) != 0) {
+                //icon id passed
+                imgIcon.setImageDrawable(getResources().getDrawable(intent.getIntExtra(Utils.ICON_ID, 0)));
+            } else {
+                if (sharedPreferences.getInt(Utils.SAVED_ICON, 0) != 0) {
+                    //icon is present
+                    imgIcon.setImageDrawable(getResources().getDrawable(sharedPreferences.getInt(Utils.SAVED_ICON, 0)));
+                }
             }
 
             Log.i("log", "pin is found. going to verify the pin.");
@@ -430,23 +436,41 @@ public class Pin extends AppCompatActivity {
             String originalPin = sharedPreferences.getString(Utils.SHAREDPREFRENCE_PIN, "");
             intNoOfDigits = originalPin.length();
             intMaxNoOfTries = intent.getIntExtra(Utils.MAX_NUMBER_OF_TRIES, -1);
+            if (boolOrieantionChangeDataSaving) {
+                sharedPreferences.edit().putInt(Utils.SAVED_NO_OF_TRIES_FOR_ORIEANTION_CHANGE, intMaxNoOfTries).commit();
+            }
             if (intMaxNoOfTries == 0) {
                 Log.i("log", "the max number of tries is infinity.");
                 boolInfinityTries = true;
+                if (boolOrieantionChangeDataSaving) {
+                    sharedPreferences.edit().putBoolean(Utils.SAVED_INFINITY_TRIES_FOR_ORIEANTION_CHANGE, true).commit();
+                }
             } else if (intMaxNoOfTries == -1) {
                 Log.i("log", "max no of tries is not given. checking for shared prefrence");
                 int temptries = sharedPreferences.getInt(Utils.SAVED_NO_OF_TRIES, 0);
                 if (temptries == 0) {
                     Log.i("log", "value from prefrence is : " + temptries);
                     boolInfinityTries = true;
+                    if (boolOrieantionChangeDataSaving) {
+                        sharedPreferences.edit().putBoolean(Utils.SAVED_INFINITY_TRIES_FOR_ORIEANTION_CHANGE, true).commit();
+                    }
                 } else {
                     Log.i("log", "the no of tries is : " + temptries);
                     boolInfinityTries = false;
+                    if (boolOrieantionChangeDataSaving) {
+                        sharedPreferences.edit().putBoolean(Utils.SAVED_INFINITY_TRIES_FOR_ORIEANTION_CHANGE, false).commit();
+                    }
                     intMaxNoOfTries = sharedPreferences.getInt(Utils.SAVED_NO_OF_TRIES, 0);
+                    if (boolOrieantionChangeDataSaving) {
+                        sharedPreferences.edit().putInt(Utils.SAVED_NO_OF_TRIES_FOR_ORIEANTION_CHANGE, intMaxNoOfTries).commit();
+                    }
                 }
             } else {
                 Log.i("log", "the max number of tries is : " + intMaxNoOfTries);
                 boolInfinityTries = false;
+                if (boolOrieantionChangeDataSaving) {
+                    sharedPreferences.edit().putBoolean(Utils.SAVED_INFINITY_TRIES_FOR_ORIEANTION_CHANGE, false).commit();
+                }
                 txtNoOfTriesLeft.setVisibility(View.VISIBLE);
                 txtNoOfTriesLeft.setText("Number of tries left : " + intMaxNoOfTries);
             }
@@ -482,7 +506,7 @@ public class Pin extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        boolSaveTextNow = false;
+        boolOrieantionChangeDataSaving = false;
 
         // Checks the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -500,7 +524,10 @@ public class Pin extends AppCompatActivity {
         Log.i("log", "value : " + sharedPreferences.getString(Utils.SAVED_TEXT, ""));
         edtPin.setText("" + sharedPreferences.getString(Utils.SAVED_TEXT, ""));
         edtPin.addTextChangedListener(textWatcher);
+        intMaxNoOfTries = sharedPreferences.getInt(Utils.SAVED_NO_OF_TRIES_FOR_ORIEANTION_CHANGE, 0);
+        txtNoOfTriesLeft.setText("Number of tries left : " + intMaxNoOfTries);
+        boolInfinityTries = sharedPreferences.getBoolean(Utils.SAVED_INFINITY_TRIES_FOR_ORIEANTION_CHANGE, false);
 
-        boolSaveTextNow = true;
+        boolOrieantionChangeDataSaving = true;
     }
 }

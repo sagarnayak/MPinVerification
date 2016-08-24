@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(MainActivity.this, Pin.class).putExtra(Utils.OPERATION_TYPE, Utils.OPERATION_TYPE_SET_NEW_PIN).putExtra(Utils.ICON_ID, R.mipmap.ic_launcher).putExtra(Utils.MAX_NUMBER_OF_TRIES, 3).putExtra(Utils.NUMBER_OF_DIGITS, 4), Utils.PIN_REQUEST_CODE);
+                startActivityForResult(new Intent(MainActivity.this, Pin.class).putExtra(Utils.OPERATION_TYPE, Utils.OPERATION_TYPE_VERIFY_PIN).putExtra(Utils.MAX_NUMBER_OF_TRIES, 3).putExtra(Utils.ICON_ID, R.mipmap.ic_launcher).putExtra(Utils.NUMBER_OF_DIGITS, 4), Utils.PIN_REQUEST_CODE);
             }
         });
     }

@@ -22,8 +22,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_above="@+id/blank_view"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_launcher" />
+            android:layout_centerHorizontal="true" />
 
         <EditText
             android:id="@+id/edittext_pin"

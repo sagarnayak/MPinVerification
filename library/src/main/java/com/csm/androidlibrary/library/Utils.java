@@ -14,6 +14,8 @@ public class Utils {
     public static final String SAVED_TEXT = "saved_text";
     public static final String SAVED_ICON = "saved_icon";
     public static final String SAVED_NO_OF_TRIES = "saved_no_of_tries";
+    public static final String SAVED_NO_OF_TRIES_FOR_ORIEANTION_CHANGE = "saved_no_of_tries_for_orieantion_change";
+    public static final String SAVED_INFINITY_TRIES_FOR_ORIEANTION_CHANGE = "saved_if_infibity_try_for_orieantion_change";
     public static final int PIN_REQUEST_CODE = 101;
 
     public static final int OPERATION_TYPE_SET_NEW_PIN = 1;
